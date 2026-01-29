@@ -307,7 +307,7 @@ docker exec kitchenspurs-frontend npm install --save-dev jest @testing-library/r
 ### Frontend
 
 \*\
-**: MySQL 8.0
+\*\*: MySQL 8.0
 
 ### Frontend
 
@@ -316,6 +316,138 @@ docker exec kitchenspurs-frontend npm install --save-dev jest @testing-library/r
 - **UI**: React 19
 - **Styling**: Tailwind CSS 4
 - **Build**: Turbopack (Next.js)
+
+## � Git Best Practices
+
+### What NOT to Commit
+
+The `.gitignore` files are configured to exclude:
+
+- ❌ **Dependencies** (`node_modules/`, `vendor/`)
+  - Reason: Large files, platform-specific binaries
+  - Recreate with: `npm install` / `composer install`
+
+- ❌ **Build Artifacts** (`.next/`, `build/`, `public/build/`)
+  - Reason: Generated files, unnecessary bloat
+  - Recreate with: `npm run build`
+
+- ❌ **Environment Files** (`.env`, `.env.local`)
+  - Reason: Contains secrets and passwords
+  - ⚠️ **NEVER** commit real credentials
+
+- ❌ **Logs** (`*.log`, `storage/logs/`)
+  - Reason: Temporary runtime data
+
+- ❌ **IDE Settings** (`.vscode/`, `.idea/`)
+  - Reason: Personal preferences
+
+### What TO Commit
+
+- ✅ **Source Code** (`.php`, `.ts`, `.tsx`, `.js`)
+- ✅ **Configuration** (`package.json`, `composer.json`, `*.config.*`)
+- ✅ **Dockerfiles** (`Dockerfile`, `docker-compose.yml`)
+- ✅ **Example Env** (`.env.example`) - Template without secrets
+- ✅ **Migrations** (`database/migrations/*.php`)
+- ✅ **Tests** (`tests/`, `__tests__/`)
+- ✅ **Documentation** (`README.md`)
+
+### Initial Repository Setup
+
+```bash
+# Initialize git (if not already done)
+git init
+
+# Add all files (respects .gitignore)
+git add .
+
+# Verify what will be committed
+git status
+
+# Check that node_modules and vendor are NOT listed
+# If they appear, verify your .gitignore files
+
+# Commit
+git commit -m "Initial commit: Laravel + Next.js Docker setup"
+
+# Add remote and push
+git remote add origin <your-repo-url>
+git push -u origin main
+```
+
+### Cloning for New Team Members
+
+When someone clones the repo, they should:
+
+```bash
+# 1. Clone repository
+git clone <repository-url>
+cd kitchenspurs
+
+# 2. Create environment files
+cp .env.example .env
+cp backend/.env.example backend/.env
+
+# 3. Build and start Docker containers
+docker-compose up --build
+
+# 4. Initialize backend
+docker exec kitchenspurs-backend php artisan key:generate
+docker exec kitchenspurs-backend php artisan migrate
+```
+
+**No manual `npm install` or `composer install` needed** - Docker handles everything!
+
+### ⚠️ Common Git Mistakes to Avoid
+
+1. **Committing node_modules**
+   - Problem: 100+ MB, thousands of files
+   - Fix: Add to `.gitignore` and remove from git:
+
+   ```bash
+   git rm -r --cached backend/node_modules frontend/node_modules
+   git commit -m "Remove node_modules from git"
+   ```
+
+2. **Committing .env with passwords**
+   - Problem: Security breach, exposed credentials
+   - Fix: Use `.env.example` with dummy values:
+
+   ```bash
+   git rm --cached .env backend/.env
+   echo ".env" >> .gitignore
+   git commit -m "Remove sensitive env files"
+   ```
+
+3. **Committing vendor/ folder**
+   - Problem: Large PHP dependencies folder
+   - Fix: Already in `.gitignore`, remove if present:
+
+   ```bash
+   git rm -r --cached backend/vendor
+   ```
+
+4. **Committing IDE settings**
+   - Problem: Personal config conflicts with team
+   - Solution: Already excluded in root `.gitignore`
+
+### Checking Repository Size
+
+Before pushing to GitHub:
+
+```bash
+# Check total repository size
+du -sh .git
+
+# List largest files
+git rev-list --objects --all | \
+  git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' | \
+  awk '/^blob/ {print substr($0,6)}' | \
+  sort --numeric-sort --key=2 | \
+  tail -20
+```
+
+**Good repo size**: < 50 MB  
+**Warning signs**: > 100 MB (likely includes dependencies)
 
 ## 👥 Contributors
 

@@ -2,10 +2,9 @@
 .vscode/
 .idea/
 
-# Node modules
+# Node modules & Dependencies
 **/node_modules/
 **/vendor/
-
 
 # Build outputs
 **/dist/
@@ -13,35 +12,47 @@
 **/build/
 **/out/
 
-
-
 # Environment files
 .env
 .env.local
 .env.*.local
-
-
+!.env.example
 
 # Logs
 logs
 *.log   
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # MacOS
 .DS_Store
+Thumbs.db
 
-# Docker
-**/docker-compose.override.yml
-**/*.env
-
+# Docker volumes & override
+docker-compose.override.yml
+.docker/
 
 # Temporary files
 tmp/
+temp/
 *.swp
+*.swo
+*~
 
 # Compressed files
 *.zip
 *.tar.gz
 *.rar
 *.7z
+
+# Database dumps
+*.sql
+*.sqlite
+*.sqlite3
+
+# Cache files
+*.cache
+.eslintcache
+
 
