@@ -1,7 +1,8 @@
 <?php
 
+use App\Dto\ResponseDto;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return ResponseDto::info('Welcome to the KitchenSpurs API');
 });
