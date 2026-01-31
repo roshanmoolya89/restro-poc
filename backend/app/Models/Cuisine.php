@@ -15,6 +15,10 @@ class Cuisine extends BaseModel
      */
     protected $table = 'cuisines';
 
+    public function restaurants()
+    {
+        return $this->hasMany(Restaurant::class, 'cuisine_id', 'id');
+    }
 
     public static function getAllCuisines()
     {

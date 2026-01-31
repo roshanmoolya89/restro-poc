@@ -12,9 +12,17 @@ class Location extends BaseModel
      */
     protected $table = 'locations';
 
+    public function restaurants()
+    {
+        return $this->hasMany(Restaurant::class, 'location_id', 'id');
+    }
 
     public static function getLocationList()
     {
         return self::select('id', 'name', 'slug')->get();
+    }
+
+    public static function getLocationById($location_id){
+        return self::findorfail($location_id);
     }
 }

@@ -23,4 +23,12 @@ class LocationService{
             return ResponseDto::error($e->getMessage());
         }
     }
+
+    public static function getLocationById($location_id){
+        try{
+            return Location::getLocationById($location_id);
+        }catch(\Exception $e){
+            return ResponseDto::error($e->getMessage());
+        }
+    }
 }
