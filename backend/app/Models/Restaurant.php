@@ -45,7 +45,7 @@ class Restaurant extends BaseModel
 
     public static function getRestaurantById($id)
     {
-        return self::findorfail($id);
+        return self::findorfail($id)->with(['location', 'cuisine'])->first();
     }
 
     public static function getAllRestaurants()
@@ -79,9 +79,19 @@ class Restaurant extends BaseModel
                 $from_date = isset($order_date_range['from']) && !empty($order_date_range['from']) ? $order_date_range['from'] : null;
                 $to_date = isset($order_date_range['to']) && !empty($order_date_range['to']) ? $order_date_range['to'] : null;
 
-                $query->withSum(['orders as revenue' => function ($q) use ($from_date, $to_date) {
-                    $q->orderTimeBetween($from_date, $to_date);
-                }], 'order_amount');
+                if ($from_date && $to_date) {
+                    $query->withSum(['orders as revenue' => function ($q) use ($from_date, $to_date) {
+                        $q->orderTimeBetween($from_date, $to_date);
+                    }], 'order_amount');
+                } else if ($from_date) {
+                    $query->withSum(['orders as revenue' => function ($q) use ($from_date) {
+                        $q->where('order_time', '>=', Carbon::parse($from_date)->startOfDay());
+                    }], 'order_amount');
+                } else if ($to_date) {
+                    $query->withSum(['orders as revenue' => function ($q) use ($to_date) {
+                        $q->where('order_time', '<=', Carbon::parse($to_date)->endOfDay());
+                    }], 'order_amount');
+                }
             });
         }else{
             $query->withSum('orders as revenue', 'order_amount');
@@ -90,6 +100,6 @@ class Restaurant extends BaseModel
 //        $query->withCount('orders')->withAvg('orders as average_order_value', 'order_amount');
 
         $query->search()->sortBy();
-        return $loadRelations ? $query->with(['location', 'cuisine']) : $query->perPage();
+        return $loadRelations ? $query->with(['location', 'cuisine'])->perPage() : $query->perPage();
     }
 }

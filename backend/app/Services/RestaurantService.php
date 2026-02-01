@@ -15,7 +15,7 @@ class RestaurantService
     public static function getRestaurantList(Request $request){
         try{
             $params = $request->all();
-            return Restaurant::getRestaurantList($params);
+            return Restaurant::getRestaurantList($params, true);
         }catch(\Exception $e){
             return ResponseDto::error($e->getMessage());
         }

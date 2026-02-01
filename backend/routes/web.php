@@ -1,6 +1,7 @@
 <?php
 
 use App\Dto\ResponseDto;
+use App\Http\Controllers\CuisineController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RestaurantController;
@@ -10,13 +11,23 @@ Route::get('/', function () {
     return ResponseDto::info('Welcome to the KitchenSpurs API');
 });
 
+// Swagger API Documentation
+Route::get('/documentation', function () {
+    return view('swagger');
+});
+
 Route::prefix('locations')->group(function (){
     Route::get('/', [LocationController::class, 'getLocationList']);
     Route::get('/{id}', [LocationController::class , 'getLocationById']);
 });
 
+Route::prefix('cuisines')->group(function (){
+    Route::get('/', [CuisineController::class, 'getAllCuisines']);
+    Route::get('/{id}', [CuisineController::class , 'getCuisineById']);
+});
+
 Route::prefix('restaurants')->group(function (){
-    Route::get('/', [RestaurantController::class, 'getAllRestaurants']);
+    Route::post('/', [RestaurantController::class, 'getAllRestaurants']);
     Route::get('/{id}', [RestaurantController::class, 'getRestaurantById']);
     Route::get('/{id}/trends', [RestaurantController::class, 'getRestaurantOrderTrends']);
 

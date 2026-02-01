@@ -10,6 +10,13 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Custom color palette */
+  --color-primary: #101a33;
+  --color-primary-light: #1a2744;
+  --color-primary-border: #2a3a5a;
+  --color-accent: #a6f46b;
+  --color-accent-hover: #95e35a;
 }
 
 @media (prefers-color-scheme: dark) {

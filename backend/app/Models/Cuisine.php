@@ -20,6 +20,11 @@ class Cuisine extends BaseModel
         return $this->hasMany(Restaurant::class, 'cuisine_id', 'id');
     }
 
+    public static function getCuisineById($id)
+    {
+        return self::findorfail($id);
+    }
+
     public static function getAllCuisines()
     {
         return self::query()->get();

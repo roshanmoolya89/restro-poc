@@ -7,9 +7,18 @@ use App\Dto\ResponseDto;
 use App\Models\Cuisine;
 
 class CuisineService{
+
     public static function getAllCuisines(){
         try{
             return Cuisine::getAllCuisines();
+        }catch(\Exception $e){
+            return ResponseDto::error($e->getMessage());
+        }
+    }
+
+    public static function getCuisineById($cuisine_id){
+        try{
+            return Cuisine::getCuisineById($cuisine_id);
         }catch(\Exception $e){
             return ResponseDto::error($e->getMessage());
         }
