@@ -140,6 +140,13 @@ docker-compose down
 # Run artisan commands
 docker exec kitchenspurs-backend php artisan <command>
 
+# Run migrations commonds
+docker exec kitchenspurs-backend php artisan migrate
+
+docker exec kitchenspurs-backend php artisan migrate:rollback
+
+docker exec kitchenspurs-backend php artisan db:seed
+
 # Install PHP package
 docker exec kitchenspurs-backend composer require <package>
 

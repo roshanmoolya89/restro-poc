@@ -17,29 +17,54 @@ Route::get('/documentation', function () {
 });
 
 Route::prefix('locations')->group(function (){
-    Route::get('/', [LocationController::class, 'getLocationList']);
-    Route::get('/{id}', [LocationController::class , 'getLocationById']);
+    // Cache for 1 hour (3600 seconds) - locations change rarely
+    Route::get('/', [LocationController::class, 'getLocationList'])
+        ->middleware('cache.api:3600');
+    
+    Route::get('/{id}', [LocationController::class , 'getLocationById'])
+        ->middleware('cache.api:3600');
 });
 
 Route::prefix('cuisines')->group(function (){
-    Route::get('/', [CuisineController::class, 'getAllCuisines']);
-    Route::get('/{id}', [CuisineController::class , 'getCuisineById']);
+    // Cache for 1 hour (3600 seconds) - cuisines change rarely
+    Route::get('/', [CuisineController::class, 'getAllCuisines'])
+        ->middleware('cache.api:3600');
+    
+    Route::get('/{id}', [CuisineController::class , 'getCuisineById'])
+        ->middleware('cache.api:3600');
 });
 
 Route::prefix('restaurants')->group(function (){
-    Route::post('/', [RestaurantController::class, 'getAllRestaurants']);
-    Route::get('/{id}', [RestaurantController::class, 'getRestaurantById']);
-    Route::get('/{id}/trends', [RestaurantController::class, 'getRestaurantOrderTrends']);
-
+    // Cache for 10 minutes (600 seconds)
+    Route::post('/', [RestaurantController::class, 'getAllRestaurants'])
+        ->middleware('cache.api:600');
+    
+    // Cache for 30 minutes (1800 seconds)
+    Route::get('/{id}', [RestaurantController::class, 'getRestaurantById'])
+        ->middleware('cache.api:1800');
+    
+    // Cache for 5 minutes (300 seconds) - trends change more frequently
+    Route::get('/{id}/trends', [RestaurantController::class, 'getRestaurantOrderTrends'])
+        ->middleware('cache.api:300');
 
     Route::prefix('{id}/orders')->group(function(){
-        Route::post('/', [RestaurantController::class, 'getRestaurantOrders']);
-        Route::get('/{order_id}', [RestaurantController::class, 'getRestaurantOrderById']);
+        // Cache for 10 minutes
+        Route::post('/', [RestaurantController::class, 'getRestaurantOrders'])
+            ->middleware('cache.api:600');
+        
+        // Cache for 30 minutes
+        Route::get('/{order_id}', [RestaurantController::class, 'getRestaurantOrderById'])
+            ->middleware('cache.api:1800');
     });
 
 });
 
 Route::prefix('orders')->group(function (){
-    Route::post('/', [OrderController::class, 'getAllOrders']);
-    Route::get('/{id}', [OrderController::class, 'getOrderById']);
+    // Cache for 10 minutes
+    Route::post('/', [OrderController::class, 'getAllOrders'])
+        ->middleware('cache.api:600');
+    
+    // Cache for 30 minutes
+    Route::get('/{id}', [OrderController::class, 'getOrderById'])
+        ->middleware('cache.api:1800');
 });
